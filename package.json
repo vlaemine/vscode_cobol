@@ -1424,6 +1424,13 @@
           },
           "default": [],
           "uniqueItems": true
+        },
+        "coboleditor.io_sleep_ms": {
+          "type": "number",
+          "description": "Sleep time in milliseconds after file I/O operations for testing or simulation purposes",
+          "default": 0,
+          "minimum": 0,
+          "scope": "window"
         }
       }
     },

@@ -3,7 +3,7 @@ import { ICOBOLSettings } from "./iconfiguration";
 import { VSCOBOLSourceScanner } from "./vscobolscanner";
 import { COBOLToken, COBOLTokenStyle, ParseState, SourceReference_Via_Length } from "./cobolsourcescanner";
 import { ICOBOLSourceScanner } from "./icobolsourcescanner";
-var fs = require('fs');
+import { fsSync } from "./iowrapper";
 
 class programWindowState {
     current_style: string;
@@ -229,7 +229,7 @@ export class DotGraphPanelView {
 
         const cssElements = vscode.Uri.joinPath(context.extensionUri, 'resources', 'vscode-elements.css');
 
-        const elementsCode: string = fs.readFileSync(cssElements.path).toString();
+        const elementsCode: string = fsSync.readFileSync(cssElements.path).toString();
         htmlContent = htmlContent.replace('vscode-elements.', elementsCode);
 
         const nonce = getNonce();

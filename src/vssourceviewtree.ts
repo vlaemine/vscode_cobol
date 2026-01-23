@@ -7,6 +7,7 @@ import { VSWorkspaceFolders } from "./vscobolfolders";
 import { VSLogger } from "./vslogger";
 import { VSCOBOLSourceScannerTools } from "./vssourcescannerutils";
 import { VSCOBOLUtils } from "./vscobolutils";
+import { createWorkspaceFsReadDirectory } from "./iowrapper";
 
 let sourceTreeView: SourceViewTree | undefined = undefined;
 let sourceTreeWatcher: vscode.FileSystemWatcher | undefined = undefined;
@@ -190,7 +191,8 @@ export class SourceViewTree implements vscode.TreeDataProvider<SourceOrFolderTre
         }
 
         this.depth++;
-        const entries = await workspace.fs.readDirectory(topLevelUri);
+        const readWithDelay = createWorkspaceFsReadDirectory(workspace);
+        const entries = await readWithDelay(topLevelUri);
 
         for (const entry of entries) {
             switch (entry[1]) {

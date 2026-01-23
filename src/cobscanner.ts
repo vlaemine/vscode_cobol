@@ -4,11 +4,11 @@ import { COBSCANNER_STATUS, ScanData, ScanDataHelper, ScanStats } from "./cobsca
 import { ConsoleExternalFeatures } from "./consoleexternalfeatures";
 
 import * as crypto from "crypto";
-import * as fs from "fs";
 import * as os from "os";
 import { Hash } from "crypto";
 import path from "path";
 import { Worker } from "worker_threads";
+import { fsSync } from "./iowrapper";
 
 import { COBOLWorkspaceSymbolCacheHelper } from "./cobolworkspacecache";
 import { InMemoryGlobalSymbolCache } from "./globalcachehelper";
@@ -352,7 +352,7 @@ for (const arg of args) {
 if (lastJsonFile.length !== 0) {
     try {
         // delete the json file
-        fs.unlinkSync(lastJsonFile);
+        fsSync.unlinkSync(lastJsonFile);
     }
     catch {
         //continue

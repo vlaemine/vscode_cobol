@@ -4,12 +4,14 @@ import { COBOLFileUtils } from "./fileutils";
 import { ICOBOLSettings } from "./iconfiguration";
 import { COBOLToken } from "./cobolsourcescanner";
 import { ICOBOLSourceScanner } from "./icobolsourcescanner";
+import { createWorkspaceFsReadDirectory } from "./iowrapper";
 
 export class VSCOBOLSourceScannerTools {
 
       public static async howManyCopyBooksInDirectory(directory: string, settings: ICOBOLSettings): Promise<number> {
         const folder = Uri.file(directory);
-        const entries = await workspace.fs.readDirectory(folder);
+        const readWithDelay = createWorkspaceFsReadDirectory(workspace);
+        const entries = await readWithDelay(folder);
         let copyBookCount = 0;
         for (const [entry, fileType] of entries) {
             switch (fileType) {

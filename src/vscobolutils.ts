@@ -20,6 +20,7 @@ import { VSCOBOLEditorConfiguration } from "./vsconfiguration";
 import { workspace } from "vscode";
 import { VSExternalFeatures } from "./vsexternalfeatures";
 import { ICOBOLSourceScanner } from "./icobolsourcescanner";
+import { createWorkspaceFsStat } from "./iowrapper";
 
 let commandTerminal: vscode.Terminal | undefined = undefined;
 const commandTerminalName = "COBOL Application";
@@ -1213,7 +1214,8 @@ export class VSCOBOLUtils {
                             const sdir = `${folder.uri.toString()}/${extdir}`;
 
                             const start_now = VSExternalFeatures.performance_now();
-                            const sdirStat = await vscode.workspace.fs.stat(vscode.Uri.parse(sdir));
+                            const statWithDelay = createWorkspaceFsStat(vscode.workspace);
+                            const sdirStat = await statWithDelay(vscode.Uri.parse(sdir));
                             const totalTimeInMS = VSExternalFeatures.performance_now() - start_now;
                             const timeTaken = totalTimeInMS.toFixed(2);
                             if (totalTimeInMS > settings.copybook_speed_limit) {

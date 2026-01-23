@@ -6,7 +6,7 @@ import { ICOBOLSettings } from "./iconfiguration";
 import { COBOLCopyBookProvider } from "./opencopybook";
 import { VSCOBOLFileUtils } from "./vsfileutils";
 
-import fs from "fs";
+import { fsSync } from "./iowrapper";
 import { COBOLFileUtils } from "./fileutils";
 import { VSWorkspaceFolders } from "./vscobolfolders";
 import { FileType, Uri, workspace } from "vscode";
@@ -65,11 +65,11 @@ class VSExternalFeaturesImpl implements IExternalFeatures {
 
     public isFile(possibleFilename: string): boolean {
         try {
-            if (fs.existsSync(possibleFilename)) {
+            if (fsSync.existsSync(possibleFilename)) {
                 // not on windows, do extra check for +x perms (protects exe & dirs)
                 // if (!COBOLFileUtils.isWin32) {
                 //     try {
-                //         fs.accessSync(sdir, fs.constants.F_OK | fs.constants.X_OK);
+                //         fsSync.accessSync(sdir, fs.constants.F_OK | fs.constants.X_OK);
                 //         return false;
                 //     }
                 //     catch {
@@ -90,7 +90,7 @@ class VSExternalFeaturesImpl implements IExternalFeatures {
     // eslint-disable-next-line @typescript-eslint/ban-types
     public getFileModTimeStamp(filename: string): BigInt|undefined {
         try {
-            const f = fs.statSync(filename, { bigint: true, throwIfNoEntry: false });
+            const f = fsSync.statSync(filename, { bigint: true, throwIfNoEntry: false });
             if (f === undefined) {
                 return undefined;
             }

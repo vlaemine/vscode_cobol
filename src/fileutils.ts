@@ -1,18 +1,18 @@
-import * as fs from "fs";
 import { ICOBOLSettings } from "./iconfiguration";
 import path from "path";
 import { IExternalFeatures } from "./externalfeatures";
+import { fsSync } from "./iowrapper";
 
 export class COBOLFileUtils {
     static readonly isWin32 = process.platform === "win32";
 
     public static isFile(sdir: string): boolean {
         try {
-            if (fs.existsSync(sdir)) {
+            if (fsSync.existsSync(sdir)) {
                 // not on windows, do extra check for +x perms (protects exe & dirs)
                 // if (!COBOLFileUtils.isWin32) {
                 //     try {
-                //         fs.accessSync(sdir, fs.constants.F_OK | fs.constants.X_OK);
+                //         fsSync.accessSync(sdir, fs.constants.F_OK | fs.constants.X_OK);
                 //         return false;
                 //     }
                 //     catch {
@@ -108,7 +108,7 @@ export class COBOLFileUtils {
 
     public static isDirectory(sdir: string): boolean {
         try {
-            const f = fs.statSync(sdir, { bigint: true });
+            const f = fsSync.statSync(sdir, { bigint: true });
             if (f && f.isDirectory()) {
                 return true;
             }

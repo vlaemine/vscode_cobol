@@ -12,6 +12,7 @@ import { ExtensionDefaults } from "./extensionDefaults";
 import { COBOLSourceScanner } from "./cobolsourcescanner";
 import path from "path";
 import fs from "fs";
+import { fsSync } from "./iowrapper";
 import { VSWorkspaceFolders } from "./vscobolfolders";
 import { VSDiagCommands } from "./vsdiagcommands";
 import { CopyBookDragDropProvider } from "./vscopybookdragdroprovider";
@@ -82,7 +83,7 @@ function newFile(title: string, template: string, doclang: string, config: ICOBO
 
             fpath = path.join(fdir, text + ".cbl");
 
-            if (fs.existsSync(fpath)) {
+            if (fsSync.existsSync(fpath)) {
                 return `File already exists (${fpath})`;
             }
 

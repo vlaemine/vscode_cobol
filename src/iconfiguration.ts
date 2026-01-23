@@ -198,6 +198,8 @@ export interface ICOBOLSettings {
     remove_reserved_words: string[];
 
     enable_minimap_section_boundaries: boolean;
+
+    io_sleep_ms: number;
 }
 
 export class COBOLSettings implements ICOBOLSettings {
@@ -216,6 +218,7 @@ export class COBOLSettings implements ICOBOLSettings {
     line_comment: boolean;
     fileformat_strategy: fileformatStrategy;
     enable_data_provider: boolean;
+    io_sleep_ms: number;
     disable_unc_copybooks_directories: boolean;
     intellisense_item_limit: number;
     process_metadata_cache_on_start: boolean;
@@ -481,6 +484,8 @@ export class COBOLSettings implements ICOBOLSettings {
         this.remove_reserved_words = [];
 
         this.enable_minimap_section_boundaries = true;
+
+        this.io_sleep_ms = 0;
     }
 
     public get_tabstops(langid:string): number[] {

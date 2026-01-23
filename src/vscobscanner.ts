@@ -17,6 +17,7 @@ import { ExtensionDefaults } from "./extensionDefaults";
 import { MakeDep } from "./makedeps";
 import { IExternalFeatures } from "./externalfeatures";
 import { COBOLCopyBookProvider } from "./opencopybook";
+import { createWorkspaceFsWriteFile } from "./iowrapper";
 
 class FileScanStats {
     directoriesScanned = 0;
@@ -187,7 +188,8 @@ export class VSCobScanner {
                             const dirName = path.dirname(currentFile);
                             const dirFilename = path.basename(currentFile);
                             const newFilename = path.join(dirName, `${settings.makefile_dependency_prefix}${dirFilename}.d`);
-                            await workspace.fs.writeFile(Uri.file(newFilename), Buffer.from(makeDepLines.join("\n"), "utf8"));
+                            const writeWithDelay = createWorkspaceFsWriteFile(workspace);
+                            await writeWithDelay(Uri.file(newFilename), Buffer.from(makeDepLines.join("\n"), "utf8"));
                         }
                     }
 

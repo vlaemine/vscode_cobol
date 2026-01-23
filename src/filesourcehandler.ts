@@ -8,6 +8,7 @@ import { getCOBOLKeywordDictionary } from "./keywords/cobolKeywords";
 import { ExtensionDefaults } from "./extensionDefaults";
 import { SimpleStringBuilder } from "./stringutils";
 import { ICOBOLSettings } from "./iconfiguration";
+import { fsSync } from "./iowrapper";
 
 export class FileSourceHandler implements ISourceHandler, ISourceHandlerLite {
     document: string;
@@ -47,14 +48,14 @@ export class FileSourceHandler implements ISourceHandler, ISourceHandlerLite {
         this.commentsIndexInline = new Map<number, boolean>();
         this.settings = settings;
         this.shortFilename = this.findShortWorkspaceFilename(document, features, settings);
-        const docstat: fs.BigIntStats = fs.statSync(document, { bigint: true });
+        const docstat: fs.BigIntStats = fsSync.statSync(document, { bigint: true });
 
         this.documentVersionId = docstat.mtimeMs;
         const startTime = features.performance_now();
         try {
             let line: string;
 
-            const linesRead = fs.readFileSync(document).toString().split(/\r?\n/);
+            const linesRead = fsSync.readFileSync(document).toString().split(/\r?\n/);
             if (this.lineRegExFilter !== undefined) {
                 for(line of linesRead) {
                     const l = line.toString();

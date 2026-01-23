@@ -7,6 +7,7 @@ import { IExternalFeatures } from "./externalfeatures";
 import { ExtensionDefaults } from "./extensionDefaults";
 import { COBOLFileUtils } from "./fileutils";
 import { VSCOBOLUtils } from "./vscobolutils";
+import { IOSleepConfig } from "./iosleep";
 
 export class WorkspaceSettings {
     public settings: IVSCOBOLSettings;
@@ -298,6 +299,11 @@ export class VSCOBOLConfiguration {
         settings.copybook_directory_aliases = editorConfig.get<{ [key: string]: string }>("copybook_directory_aliases", settings.copybook_directory_aliases);
         
         settings.remove_reserved_words = editorConfig.get<string[]>("remove_reserved_words", settings.remove_reserved_words);
+
+        settings.io_sleep_ms = editorConfig.get<number>("io_sleep_ms", settings.io_sleep_ms);
+        
+        // Apply I/O sleep configuration
+        IOSleepConfig.setDelay(settings.io_sleep_ms);
         
         return settings;
     }

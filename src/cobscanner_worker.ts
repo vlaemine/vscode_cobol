@@ -4,13 +4,13 @@ import { Scanner, workerThreadData } from "./cobscanner";
 import { ScanStats } from "./cobscannerdata";
 import { IExternalFeatures } from "./externalfeatures";
 
-import * as fs from "fs";
 import * as path from "path";
 import util from "util";
 import { ICOBOLSettings } from "./iconfiguration";
 import { COBOLFileUtils } from "./fileutils";
 import { ICOBOLSourceScannerEventer } from "./icobolsourcescanner";
 import { ISourceHandler } from "./isourcehandler";
+import { fsSync } from "./iowrapper";
 
 export class ThreadConsoleExternalFeatures implements IExternalFeatures {
     public static readonly Default = new ThreadConsoleExternalFeatures();
@@ -76,7 +76,7 @@ export class ThreadConsoleExternalFeatures implements IExternalFeatures {
         for (const folder of this.workspaceFolders) {
             const possibleFile = path.join(folder, sdir);
             if (this.isFile(possibleFile)) {
-                const stat4src = fs.statSync(possibleFile, { bigint: true });
+                const stat4src = fsSync.statSync(possibleFile, { bigint: true });
                 if (sdirMs === stat4src.mtimeMs) {
                     return possibleFile;
                 }
@@ -88,11 +88,11 @@ export class ThreadConsoleExternalFeatures implements IExternalFeatures {
 
     public isFile(possibleFilename: string): boolean {
         try {
-            if (fs.existsSync(possibleFilename)) {
+            if (fsSync.existsSync(possibleFilename)) {
                 // not on windows, do extra check for +x perms (protects exe & dirs)
                 // if (!COBOLFileUtils.isWin32) {
                 //     try {
-                //         fs.accessSync(sdir, fs.constants.F_OK | fs.constants.X_OK);
+                //         fsSync.accessSync(sdir, fs.constants.F_OK | fs.constants.X_OK);
                 //         return false;
                 //     }
                 //     catch {
@@ -115,7 +115,7 @@ export class ThreadConsoleExternalFeatures implements IExternalFeatures {
 
     public getFileModTimeStamp(filename: string): BigInt|undefined {
         try {
-            const possibleFileMod = fs.statSync(filename, { bigint: true, throwIfNoEntry: false });
+            const possibleFileMod = fsSync.statSync(filename, { bigint: true, throwIfNoEntry: false });
             if (possibleFileMod === undefined) {
                 return undefined;
             }

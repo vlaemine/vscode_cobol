@@ -1,11 +1,11 @@
 import path from "path";
-import fs from "fs";
 
 import { VSWorkspaceFolders } from "./vscobolfolders";
 import { Range, TextEditor, Uri, window, workspace, WorkspaceFolder } from "vscode";
 
 import { ICOBOLSettings } from "./iconfiguration";
 import { IExternalFeatures } from "./externalfeatures";
+import { fsSync } from "./iowrapper";
 
 export class VSCOBOLFileUtils {
 
@@ -265,7 +265,7 @@ export class VSCOBOLFileUtils {
             }
             const filename = path.join(dir, copybook_filename + ".cpy");
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            await fs.writeFileSync(filename, text);
+            await fsSync.writeFileSync(filename, text);
             activeTextEditor.edit(edit => {
                 edit.replace(ran, "           copy \"" + copybook_filename + ".cpy\".");
             });

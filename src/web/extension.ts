@@ -18,6 +18,7 @@ import { VSSemanticProvider } from "../vssemanticprovider";
 import { ExtensionDefaults } from "../extensionDefaults";
 import { commands, languages, ProviderResult } from "vscode";
 import { VSCobolRenameProvider } from "../vsrenameprovider";
+import { createWorkspaceFsStat } from "../iowrapper";
 import { VSPPCodeLens } from "../vsppcodelens";
 import { activateCommonCommands, checkForExtensionConflicts } from "../vscommon_commands";
 import { VSWorkspaceFolders } from "../vscobolfolders";
@@ -68,7 +69,8 @@ async function setupLogChannelAndPaths(hide: boolean, settings: ICOBOLSettings) 
                 try {
                     const sdir = `${folder.uri.toString()}/${extdir}`;
 
-                    const sdirStat = await vscode.workspace.fs.stat(vscode.Uri.parse(sdir));
+                    const statWithDelay = createWorkspaceFsStat(vscode.workspace);
+                    const sdirStat = await statWithDelay(vscode.Uri.parse(sdir));
                     if (sdirStat.type & vscode.FileType.Directory) {
                         URLSearchDirectory.push(sdir);
                     } else {
