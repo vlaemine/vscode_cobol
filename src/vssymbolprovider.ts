@@ -172,7 +172,7 @@ export class CobolSymbolInformationProvider implements vscode.DocumentSymbolProv
             return symbols;
         }
 
-        const sf = VSCOBOLSourceScanner.getCachedObject(document,config);
+        const sf = VSCOBOLSourceScanner.getCachedObject(document, config, canceltoken);
 
         if (sf === undefined) {
             return symbols;

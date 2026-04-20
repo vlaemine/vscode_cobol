@@ -18,7 +18,7 @@ export class COBOLHierarchyProvider implements vscode.CallHierarchyProvider {
                 return undefined;
             }
             
-            this.current = VSCOBOLSourceScanner.getCachedObject(document, settings);
+            this.current = VSCOBOLSourceScanner.getCachedObject(document, settings, token);
             let detail = "";
             if (this.current !== undefined) {
                 const sourceRefs: SharedSourceReferences = this.current.sourceReferences;

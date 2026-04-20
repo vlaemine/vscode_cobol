@@ -10,6 +10,7 @@ import { ICOBOLSettings } from "./iconfiguration";
 import { CobolLinterProviderSymbols, ESourceFormat, IExternalFeatures } from "./externalfeatures";
 
 import * as path from "path";
+import { CancellationError, CancellationToken } from "vscode";
 import { SourceFormat } from "./sourceformat";
 import { ExtensionDefaults } from "./extensionDefaults";
 import { SplitTokenizer } from "./splittoken";
@@ -836,6 +837,7 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
     public readonly parse_copybooks_for_references: boolean;
     public readonly scan_comments_for_hints: boolean;
     public readonly isFromScanCommentsForReferences: boolean;
+    public readonly cancel: CancellationToken | undefined;
     public readonly scan_comment_for_ls_control: boolean;
 
     readonly copybookNestedInSection: boolean;
@@ -884,7 +886,8 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
             parse_copybooks_for_references,
             eventHandler,
             externalFeatures,
-            false
+            false,
+            undefined
         );
     }
 
@@ -925,7 +928,8 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
             parse_copybooks_for_references,
             eventHandler,
             externalFeatures,
-            isFromScanCommentsForReferences);
+            isFromScanCommentsForReferences,
+            this.cancel);
 
         // unless the state has been replaces
         if (state.current01Group === undefined) {
@@ -952,7 +956,8 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
         parse_copybooks_for_references: boolean,
         sourceEventHandler: ICOBOLSourceScannerEvents,
         externalFeatures: IExternalFeatures,
-        isFromScanCommentsForReferences: boolean) {
+        isFromScanCommentsForReferences: boolean,
+        cancel: CancellationToken | undefined) {
         const filename = sourceHandler.getFilename();
 
         this.sourceHandler = sourceHandler;
@@ -965,6 +970,7 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
         this.externalFeatures = externalFeatures;
         this.scan_comments_for_hints = configHandler.scan_comments_for_hints;
         this.isFromScanCommentsForReferences = isFromScanCommentsForReferences;
+        this.cancel = cancel;
 
         this.copybookNestedInSection = configHandler.copybooks_nested;
         this.scan_comment_for_ls_control = configHandler.scan_comment_for_ls_control;
@@ -1188,7 +1194,7 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
         
         sourceEventHandler.processRawMessage(COBSCANNER_START_OF_FILE, filename);
 
-        let sourceTimeout = externalFeatures.getSourceTimeout(this.configHandler);
+        //let sourceTimeout = externalFeatures.getSourceTimeout(this.configHandler);
         if (externalFeatures)
             for (let l = 0; l < sourceHandler.getLineCount(); l++) {
                 try {
@@ -1214,7 +1220,7 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
                     }
 
                     // if we are not debugging..
-                    if (externalFeatures.isDebuggerActive() === false) {
+                    /*if (externalFeatures.isDebuggerActive() === false) {
                         // check for timeout every 1000 lines
                         if (l % 1000 !== 0) {
                             const elapsedTime = externalFeatures.performance_now() - this.sourceReferences.startTime;
@@ -1224,7 +1230,7 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
                                 return;
                             }
                         }
-                    }
+                    }*/
 
                     // only do this for "COBOL" language
                     if (this.usePortationSourceScanner) {
@@ -3183,6 +3189,10 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
     }
 
     private processCopyBook(cbInfo: copybookState): boolean {
+        if (this.cancel?.isCancellationRequested) {
+            this.externalFeatures.logMessage("Copybook processing cancelled");
+            throw new CancellationError();
+        }
         if (cbInfo.copybookDepths.length > this.configHandler.copybook_scan_depth) {
             return false;
         }
@@ -3226,6 +3236,9 @@ export class COBOLSourceScanner implements ICommentCallback, ICOBOLSourceScanner
 
         const copybookToken = new COBOLCopybookToken(copyToken, false, cbInfo);
 
+        if (trimmedCopyBook.startsWith("C_ABORT")) {
+            console.log("eureka");
+        }
         const fileName = this.externalFeatures.expandLogicalCopyBookToFilenameOrEmpty(trimmedCopyBook, copyToken.extraInformation, this.sourceHandler, this.configHandler);
         if (fileName.length === 0) {
             this.processUnUsedCopyBook(trimmedCopyBook, copyToken);

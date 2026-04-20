@@ -1,5 +1,5 @@
 import { VSCodeSourceHandler } from "./vscodesourcehandler";
-import { TextDocument, debug } from "vscode";
+import { CancellationError, CancellationToken, TextDocument, debug } from "vscode";
 import { COBOLSourceScanner, COBOLToken, COBOLTokenStyle, EmptyCOBOLSourceScannerEventHandler, SharedSourceReferences } from "./cobolsourcescanner";
 import { InMemoryGlobalCacheHelper, InMemoryGlobalSymbolCache } from "./globalcachehelper";
 
@@ -102,7 +102,11 @@ export class VSCOBOLSourceScanner {
         }
     }
 
-    public static getCachedObject(document: TextDocument, config: ICOBOLSettings): ICOBOLSourceScanner | undefined {
+    public static getCachedObject(document: TextDocument, config: ICOBOLSettings, cancel?: CancellationToken): ICOBOLSourceScanner | undefined {
+        if (cancel?.isCancellationRequested) {
+            VSLogger.logMessage("Source scanning cancelled");
+            throw new CancellationError();
+        }
         if (config.enable_source_scanner === false) {
             return undefined;
         }
@@ -174,7 +178,8 @@ export class VSCOBOLSourceScanner {
                     config.parse_copybooks_for_references,
                     cacheData ? new COBOLSymbolTableGlobalEventHelper(config) : EmptyCOBOLSourceScannerEventHandler.Default,
                     VSExternalFeatures,
-                    false);
+                    false,
+                    cancel);
 
                 if (qcpd.scanAborted === false) {
                     const elapsedTime = VSExternalFeatures.performance_now() - startTime;

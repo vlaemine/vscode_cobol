@@ -173,7 +173,8 @@ export class Scanner {
                         config.parse_copybooks_for_references, 
                         symbolCatcher, 
                         features,
-                        false);
+                        false,
+                        undefined);
                     if (qcp.callTargets.size > 0) {
                         stats.programsDefined++;
                         if (qcp.callTargets !== undefined) {

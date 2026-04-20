@@ -25,7 +25,7 @@ export class VSCobolRenameProvider implements vscode.RenameProvider {
         const settings = VSCOBOLConfiguration.get_resource_settings(document, VSExternalFeatures);
         // cache current document, so interactive searches can be faster
         if (this.current === undefined || this.currentVersion !== document.version) {
-            const newCurrent = VSCOBOLSourceScanner.getCachedObject(document, settings);
+            const newCurrent = VSCOBOLSourceScanner.getCachedObject(document, settings, token);
             if (newCurrent !== undefined) {
                 this.current = newCurrent;
                 this.sourceRefs = this.current.sourceReferences;

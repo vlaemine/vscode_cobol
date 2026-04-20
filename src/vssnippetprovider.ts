@@ -1640,7 +1640,7 @@ export class SnippetCompletionItemProvider extends SnippetHelper implements Comp
             return [];
         }
 
-        const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document, config);
+        const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document, config, token);
         if (qcp === undefined) {
             return [];
         }

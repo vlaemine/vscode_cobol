@@ -53,7 +53,7 @@ export class COBOLCopyBookProvider implements vscode.DefinitionProvider {
         const locations: vscode.Location[] = [];
 
         const config = VSCOBOLConfiguration.get_resource_settings(document, VSExternalFeatures);
-        const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document, config);
+        const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document, config, ct);
         if (qcp === undefined) {
             return this.resolveDefinitionsFallback(document, pos, ct);
         }

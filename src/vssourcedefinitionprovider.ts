@@ -27,7 +27,7 @@ export class COBOLSourceDefinition implements vscode.DefinitionProvider {
 
         const theline = document.lineAt(position.line).text;
         if (theline.match(/.*(perform|thru|go\s*to|until|varying).*$/i)) {
-            const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document,config);
+            const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document,config, token);
             if (qcp === undefined) {
                 return locations;
             }
@@ -40,7 +40,7 @@ export class COBOLSourceDefinition implements vscode.DefinitionProvider {
         }
 
         if (theline.match(/.*(new\s*|type).*$/i)) {
-            const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document,config);
+            const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document,config, token);
             if (qcp === undefined) {
                 return locations;
             }
@@ -53,7 +53,7 @@ export class COBOLSourceDefinition implements vscode.DefinitionProvider {
         }
 
         if (theline.match(/.*(invoke\s*|::)(.*$)/i)) {
-            const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document, config);
+            const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document, config, token);
             if (qcp === undefined) {
                 return locations;
             }
@@ -70,7 +70,7 @@ export class COBOLSourceDefinition implements vscode.DefinitionProvider {
         }
 
         /* is it a sql cursor? */
-        const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document,config);
+        const qcp: ICOBOLSourceScanner | undefined = VSCOBOLSourceScanner.getCachedObject(document,config, token);
         if (qcp !== undefined) {
             if (VSCOBOLSourceScannerTools.isPositionInEXEC(qcp, position)) {
                 const loc = this.getSQLCursor(document, qcp, position);

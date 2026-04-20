@@ -35,7 +35,7 @@ export class COBOLFoldingRangeProvider implements vscode.FoldingRangeProvider {
 
         const ranges: vscode.FoldingRange[] = [];
 
-        const sf = VSCOBOLSourceScanner.getCachedObject(document, config);
+        const sf = VSCOBOLSourceScanner.getCachedObject(document, config, token);
 
         // Structural folding from parsed tokens (divisions, sections, paragraphs, etc.)
         if (sf !== undefined) {
